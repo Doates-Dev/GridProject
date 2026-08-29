@@ -42,7 +42,7 @@ public class Enemy : MonoBehaviour
         return hasMovedThisTurn;
     }
 
-
+    //work pls
     public void SetHasMoved()
     {
         hasMovedThisTurn = true;
