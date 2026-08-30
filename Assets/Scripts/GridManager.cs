@@ -54,10 +54,10 @@ public class GridManager : MonoBehaviour
             -10
         );
 
-        _tiles[new Vector2(0, 2)].SetColor(Color.black);
-        _tiles[new Vector2(0, 6)].SetColor(Color.black);
-        _tiles[new Vector2(15, 2)].SetColor(Color.black);
-        _tiles[new Vector2(15, 6)].SetColor(Color.black);
+       // _tiles[new Vector2(0, 2)].SetColor(Color.black);
+       // _tiles[new Vector2(0, 6)].SetColor(Color.black);
+      //  _tiles[new Vector2(15, 2)].SetColor(Color.black);
+       // _tiles[new Vector2(15, 6)].SetColor(Color.black);
     }
 
     public Tile GetTileAtPosition(Vector2 pos)

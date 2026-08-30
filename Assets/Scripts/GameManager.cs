@@ -195,6 +195,8 @@ public class GameManager : MonoBehaviour
     {
         enemiesWhoMovedBall.Clear();
 
+        Debug.Log("Enemy ball turn started.");
+
         UpdateGamestate(Gamestate.EnemyBallMove);
     }
 
@@ -207,7 +209,8 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("All enemies have moved!");
 
-        UpdateGamestate(Gamestate.EnemyBallMove);
+        // Start enemy ball phase
+        StartEnemyBallTurn();
     }
 
 

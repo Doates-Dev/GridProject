@@ -205,7 +205,7 @@ public class Ball : MonoBehaviour
         Vector2 finalPosition = startingPosition;
 
         // Check up to 3 spaces
-        for (int i = 1; i <= 3; i++)
+        for (int i = 1; i <= 2; i++)
         {
             Vector2 checkPosition =
                 startingPosition + direction * i;
