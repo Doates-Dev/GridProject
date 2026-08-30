@@ -14,11 +14,12 @@ public class EnemyManager : MonoBehaviour
         enemies.Clear();
 
         // 1 enemy on left
-        SpawnEnemy(0, 8);
+        SpawnEnemy(1, 7);
+        SpawnEnemy(1, 7);
 
         // 2 enemies on right
-        SpawnEnemy(8, 16);
-        SpawnEnemy(8, 16);
+        SpawnEnemy(9, 14);
+        SpawnEnemy(9, 14);
     }
 
     private void SpawnEnemy(int minX, int maxX)

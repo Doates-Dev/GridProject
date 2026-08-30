@@ -14,11 +14,13 @@ public class PlayerManager : MonoBehaviour
         players.Clear();
 
         // 1 player on the left
-        SpawnPlayer(0, 8);
+        SpawnPlayer(1, 7);
+        SpawnPlayer(1, 7);
 
         // 2 players on the right
-        SpawnPlayer(8, 16);
-        SpawnPlayer(8, 16);
+        
+        SpawnPlayer(9, 14);
+        SpawnPlayer(9, 14);
     }
 
     private void SpawnPlayer(int minX, int maxX)

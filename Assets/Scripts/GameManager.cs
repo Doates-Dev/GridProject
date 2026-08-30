@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+
 
 public class GameManager : MonoBehaviour
 {
@@ -6,6 +8,8 @@ public class GameManager : MonoBehaviour
 
     public Gamestate State;
     public MonoBehaviour SelectedObject;
+    private HashSet<Player> playersWhoMovedBall = new HashSet<Player>();
+    private HashSet<Enemy> enemiesWhoMovedBall = new HashSet<Enemy>();
 
     private void Awake()
     {
@@ -149,6 +153,9 @@ public class GameManager : MonoBehaviour
 
         playerManager.ResetPlayerMoves();
 
+        // Reset ball movement for players
+        playersWhoMovedBall.Clear();
+
         UpdateGamestate(Gamestate.PlayerMove);
     }
 
@@ -169,7 +176,26 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Player finished moving the ball.");
 
-        UpdateGamestate(Gamestate.EnemyMove);
+        Ball ball = FindFirstObjectByType<Ball>();
+
+        if (ball != null && ball.IsEligiblePlayerNearBall())
+        {
+            Debug.Log("An eligible player is still near the ball.");
+
+            UpdateGamestate(Gamestate.PlayerBallMove);
+        }
+        else
+        {
+            Debug.Log("No eligible players are near the ball.");
+
+            UpdateGamestate(Gamestate.EnemyMove);
+        }
+    }
+    public void StartEnemyBallTurn()
+    {
+        enemiesWhoMovedBall.Clear();
+
+        UpdateGamestate(Gamestate.EnemyBallMove);
     }
 
 
@@ -193,7 +219,20 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Enemy finished moving the ball.");
 
-        StartPlayerTurn();
+        Ball ball = FindFirstObjectByType<Ball>();
+
+        if (ball != null && ball.IsEligibleEnemyNearBall())
+        {
+            Debug.Log("An eligible enemy is still near the ball.");
+
+            UpdateGamestate(Gamestate.EnemyBallMove);
+        }
+        else
+        {
+            Debug.Log("No eligible enemies are near the ball.");
+
+            StartPlayerTurn();
+        }
     }
 
 
@@ -230,5 +269,27 @@ public class GameManager : MonoBehaviour
         {
             SelectedObject = null;
         }
+    }
+    public bool HasPlayerMovedBall(Player player)
+    {
+        return playersWhoMovedBall.Contains(player);
+    }
+
+
+    public void PlayerMovedBall(Player player)
+    {
+        playersWhoMovedBall.Add(player);
+    }
+
+
+    public bool HasEnemyMovedBall(Enemy enemy)
+    {
+        return enemiesWhoMovedBall.Contains(enemy);
+    }
+
+
+    public void EnemyMovedBall(Enemy enemy)
+    {
+        enemiesWhoMovedBall.Add(enemy);
     }
 }

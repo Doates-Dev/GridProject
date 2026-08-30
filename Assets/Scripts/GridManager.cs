@@ -67,6 +67,13 @@ public class GridManager : MonoBehaviour
 
         return null;
     }
+    public bool IsRestrictedPosition(Vector2 position)
+    {
+        return position == new Vector2(0, 2) ||
+               position == new Vector2(0, 6) ||
+               position == new Vector2(15, 2) ||
+               position == new Vector2(15, 6);
+    }
 
     // Get a random unoccupied position within a specific part of the board
     public Vector2 GetRandomAvailablePosition(int minX, int maxX)
@@ -75,7 +82,7 @@ public class GridManager : MonoBehaviour
 
         for (int x = minX; x < maxX; x++)
         {
-            for (int y = 0; y < _height; y++)
+            for (int y = 2; y <= 5; y++)
             {
                 Vector2 position = new Vector2(x, y);
 

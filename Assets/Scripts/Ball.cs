@@ -6,6 +6,8 @@ public class Ball : MonoBehaviour
 
     private bool isSelected = false;
 
+    private Player ballMovingPlayer;
+    private Enemy ballMovingEnemy;
 
     // ==========================================
     // SETUP
@@ -31,43 +33,79 @@ public class Ball : MonoBehaviour
 
     private void OnMouseDown()
     {
+        // ==========================================
         // PLAYER BALL MOVE
+        // ==========================================
+
         if (GameManager.Instance.State ==
             GameManager.Gamestate.PlayerBallMove)
         {
-            if (!IsPlayerNearBall())
-            {
-                Debug.Log(
-                    "No player is close enough to move the ball."
+            Player[] players =
+                FindObjectsByType<Player>(
+                    FindObjectsSortMode.None
                 );
 
-                return;
+            foreach (Player player in players)
+            {
+                // This player has already moved the ball
+                if (GameManager.Instance.HasPlayerMovedBall(player))
+                    continue;
+
+                // Is this player beside the ball?
+                if (IsWithinOneTile(player.GetGridPosition()))
+                {
+                    ballMovingPlayer = player;
+                    isSelected = true;
+
+                    Debug.Log(
+                        player.gameObject.name +
+                        " selected the ball."
+                    );
+
+                    return;
+                }
             }
 
-            isSelected = true;
-
-            Debug.Log("Player selected ball.");
+            Debug.Log("No eligible player is near the ball.");
 
             return;
         }
 
 
+        // ==========================================
         // ENEMY BALL MOVE
+        // ==========================================
+
         if (GameManager.Instance.State ==
             GameManager.Gamestate.EnemyBallMove)
         {
-            if (!IsEnemyNearBall())
-            {
-                Debug.Log(
-                    "No enemy is close enough to move the ball."
+            Enemy[] enemies =
+                FindObjectsByType<Enemy>(
+                    FindObjectsSortMode.None
                 );
 
-                return;
+            foreach (Enemy enemy in enemies)
+            {
+                // This enemy has already moved the ball
+                if (GameManager.Instance.HasEnemyMovedBall(enemy))
+                    continue;
+
+                // Is this enemy beside the ball?
+                if (IsWithinOneTile(enemy.GetGridPosition()))
+                {
+                    ballMovingEnemy = enemy;
+                    isSelected = true;
+
+                    Debug.Log(
+                        enemy.gameObject.name +
+                        " selected the ball."
+                    );
+
+                    return;
+                }
             }
 
-            isSelected = true;
-
-            Debug.Log("Enemy selected ball.");
+            Debug.Log("No eligible enemy is near the ball.");
 
             return;
         }
@@ -172,7 +210,17 @@ public class Ball : MonoBehaviour
             Vector2 checkPosition =
                 startingPosition + direction * i;
 
-            // Check if we're outside the grid
+            // Restricted tile
+            if (GridManager.Instance.IsRestrictedPosition(checkPosition))
+            {
+                Debug.Log(
+                    "Ball cannot enter restricted tile: " +
+                    checkPosition
+                );
+
+                break;
+            }
+
             Tile checkTile =
                 GridManager.Instance.GetTileAtPosition(checkPosition);
 
@@ -182,7 +230,6 @@ public class Ball : MonoBehaviour
                 break;
             }
 
-            // Check if something is occupying this tile
             if (GridManager.Instance.IsPositionOccupied(checkPosition))
             {
                 Debug.Log(
@@ -191,11 +238,9 @@ public class Ball : MonoBehaviour
                     ". Stopping before obstacle."
                 );
 
-                // Stop on the tile before the obstacle
                 break;
             }
 
-            // This tile is clear
             finalPosition = checkPosition;
         }
 
@@ -239,6 +284,35 @@ public class Ball : MonoBehaviour
 
 
         // ==========================================
+        // RECORD WHO MOVED THE BALL
+        // ==========================================
+
+        if (ballMovingPlayer != null)
+        {
+            GameManager.Instance.PlayerMovedBall(ballMovingPlayer);
+
+            Debug.Log(
+                ballMovingPlayer.gameObject.name +
+                " has used their ball movement."
+            );
+
+            ballMovingPlayer = null;
+        }
+
+        if (ballMovingEnemy != null)
+        {
+            GameManager.Instance.EnemyMovedBall(ballMovingEnemy);
+
+            Debug.Log(
+                ballMovingEnemy.gameObject.name +
+                " has used their ball movement."
+            );
+
+            ballMovingEnemy = null;
+        }
+
+
+        // ==========================================
         // CHECK VICTORY
         // ==========================================
 
@@ -252,6 +326,23 @@ public class Ball : MonoBehaviour
 
             return;
         }
+
+
+        // ==========================================
+        // CHECK LOSE
+        // ==========================================
+
+        if (IsLosePosition())
+        {
+            Debug.Log("BALL ENTERED LOSE AREA!");
+
+            GameManager.Instance.UpdateGamestate(
+                GameManager.Gamestate.Lose
+            );
+
+            return;
+        }
+
 
 
         // ==========================================
@@ -377,6 +468,54 @@ public class Ball : MonoBehaviour
         return currentGridPosition == new Vector2(15, 3) ||
                currentGridPosition == new Vector2(15, 4) ||
                currentGridPosition == new Vector2(15, 5);
+    }
+    private bool IsLosePosition()
+    {
+        return currentGridPosition == new Vector2(0, 3) ||
+               currentGridPosition == new Vector2(0, 4) ||
+               currentGridPosition == new Vector2(0, 5);
+    }
+    public bool IsEligiblePlayerNearBall()
+    {
+        Player[] players =
+            FindObjectsByType<Player>(
+                FindObjectsSortMode.None
+            );
+
+        foreach (Player player in players)
+        {
+            // Ignore players who already moved the ball
+            if (GameManager.Instance.HasPlayerMovedBall(player))
+                continue;
+
+            if (IsWithinOneTile(player.GetGridPosition()))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    public bool IsEligibleEnemyNearBall()
+    {
+        Enemy[] enemies =
+            FindObjectsByType<Enemy>(
+                FindObjectsSortMode.None
+            );
+
+        foreach (Enemy enemy in enemies)
+        {
+            // Ignore enemies who already moved the ball
+            if (GameManager.Instance.HasEnemyMovedBall(enemy))
+                continue;
+
+            if (IsWithinOneTile(enemy.GetGridPosition()))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

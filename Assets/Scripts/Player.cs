@@ -176,6 +176,11 @@ public class Player : MonoBehaviour
         // Players move ONE square
         Vector2 newGridPosition =
             currentGridPosition + direction;
+        if (GridManager.Instance.IsRestrictedPosition(newGridPosition))
+        {
+            Debug.Log("Players cannot move onto this tile!");
+            return;
+        }
 
 
         Tile targetTile =
