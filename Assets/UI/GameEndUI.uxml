@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/GameEndUI.uss?fileID=7433441132597879392&amp;guid=dff612b48676e4347a64adb995a3b00e&amp;type=3#GameEndUI" />
+    <ui:VisualElement name="GameEndPanel" style="flex-grow: 1;">
+        <ui:Label tabindex="-1" text="Red Wins!" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LoseText" style="color: rgb(255, 0, 0); align-self: auto; justify-content: flex-start; top: -79px; position: relative;" />
+        <ui:Label tabindex="-1" text="Blue Wins!" parse-escape-sequences="true" display-tooltip-when-elided="true" name="VictoryText" style="top: -165px; color: rgb(0, 13, 253); position: relative;" />
+        <ui:Button text="Restart" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RestartButton" style="background-color: rgb(186, 190, 0); width: 289px; height: 51px; font-size: 40px; margin-top: 2px;" />
+    </ui:VisualElement>
+</ui:UXML>

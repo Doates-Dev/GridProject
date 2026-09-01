@@ -9,9 +9,16 @@ public class Ball : MonoBehaviour
     private Player ballMovingPlayer;
     private Enemy ballMovingEnemy;
 
+
+   
+
     // ==========================================
     // SETUP
     // ==========================================
+
+
+
+
 
     public void SetGridPosition(Vector2 position)
     {
@@ -33,6 +40,7 @@ public class Ball : MonoBehaviour
 
     private void OnMouseDown()
     {
+        
         // ==========================================
         // PLAYER BALL MOVE
         // ==========================================
@@ -242,6 +250,9 @@ public class Ball : MonoBehaviour
             }
 
             finalPosition = checkPosition;
+            
+
+
         }
 
 
@@ -517,5 +528,6 @@ public class Ball : MonoBehaviour
 
         return false;
     }
+    
 
 }

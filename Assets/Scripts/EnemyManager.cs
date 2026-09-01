@@ -16,8 +16,10 @@ public class EnemyManager : MonoBehaviour
         // 1 enemy on left
         SpawnEnemy(1, 7);
         SpawnEnemy(1, 7);
+        SpawnEnemy(1, 7);
 
         // 2 enemies on right
+        SpawnEnemy(9, 14);
         SpawnEnemy(9, 14);
         SpawnEnemy(9, 14);
     }
@@ -82,5 +84,17 @@ public class EnemyManager : MonoBehaviour
         }
 
         Debug.Log("Enemy turn started");
+    }
+    public void ClearEnemies()
+    {
+        foreach (Enemy enemy in enemies)
+        {
+            if (enemy != null)
+            {
+                Destroy(enemy.gameObject);
+            }
+        }
+
+        enemies.Clear();
     }
 }

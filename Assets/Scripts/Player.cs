@@ -5,11 +5,13 @@ public class Player : MonoBehaviour
     private Vector2 currentGridPosition;
 
     private bool isSelected = false;
+    
 
     // Each player has their own movement flag
     private bool hasMovedThisTurn = false;
 
     private PlayerManager playerManager;
+    [SerializeField] private GameObject highlight;
 
 
     // ==========================================
@@ -47,6 +49,8 @@ public class Player : MonoBehaviour
     public void SetHasMoved()
     {
         hasMovedThisTurn = true;
+
+        UpdateHighlight();
     }
 
 
@@ -54,6 +58,8 @@ public class Player : MonoBehaviour
     {
         hasMovedThisTurn = false;
         isSelected = false;
+
+        UpdateHighlight();
     }
 
 
@@ -241,5 +247,22 @@ public class Player : MonoBehaviour
 
         // Tell PlayerManager
         playerManager.PlayerMoved(this);
+    }
+    private void UpdateHighlight()
+    {
+        
+        if (highlight == null)
+        {
+            Debug.Log(gameObject.name + " HAS NO HIGHLIGHT ASSIGNED!");
+            return;
+        }
+
+        bool shouldHighlight =
+            !hasMovedThisTurn &&
+            GameManager.Instance.State == GameManager.Gamestate.PlayerMove;
+
+        highlight.SetActive(shouldHighlight);
+
+        Debug.Log(gameObject.name + " highlight: " + shouldHighlight);
     }
 }

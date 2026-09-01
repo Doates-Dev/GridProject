@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
     private bool hasMovedThisTurn = false;
 
     private EnemyManager enemyManager;
+    [SerializeField] private GameObject highlight;
 
 
     // ==========================================
@@ -46,6 +47,8 @@ public class Enemy : MonoBehaviour
     public void SetHasMoved()
     {
         hasMovedThisTurn = true;
+
+        UpdateHighlight();
     }
 
 
@@ -53,6 +56,8 @@ public class Enemy : MonoBehaviour
     {
         hasMovedThisTurn = false;
         isSelected = false;
+
+        UpdateHighlight();
     }
 
 
@@ -223,5 +228,16 @@ public class Enemy : MonoBehaviour
 
         // Tell EnemyManager
         enemyManager.EnemyMoved(this);
+    }
+    private void UpdateHighlight()
+    {
+        if (highlight == null)
+            return;
+
+        bool shouldHighlight =
+            !hasMovedThisTurn &&
+            GameManager.Instance.State == GameManager.Gamestate.EnemyMove;
+
+        highlight.SetActive(shouldHighlight);
     }
 }

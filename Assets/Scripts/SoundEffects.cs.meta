@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 98077393b7371c54cb817551d7c79d24
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - src: {instanceID: 0}
+  - KickSound: {fileID: 8300000, guid: ecbc588d1c2895f449c8146b83704f1b, type: 3}
+  - NetSound: {fileID: 8300000, guid: 54fd02f3ecb0efa489b469d8f59f419d, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -6,6 +6,7 @@ public class BallManager : MonoBehaviour
     [SerializeField] private GameObject ballPrefab;
 
     private GameObject ball;
+   
 
     public void SpawnRandomBall()
     {
@@ -53,6 +54,15 @@ public class BallManager : MonoBehaviour
         Ball ballScript = ball.GetComponent<Ball>();
         ballScript.SetGridPosition(randomPosition);
         GridManager.Instance.OccupyPosition(randomPosition);
+    }
+    public void ClearBall()
+    {
+        Ball ball = FindFirstObjectByType<Ball>();
+
+        if (ball != null)
+        {
+            Destroy(ball.gameObject);
+        }
     }
 
 }

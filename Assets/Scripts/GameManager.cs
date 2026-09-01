@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 public class GameManager : MonoBehaviour
@@ -11,6 +12,26 @@ public class GameManager : MonoBehaviour
     private HashSet<Player> playersWhoMovedBall = new HashSet<Player>();
     private HashSet<Enemy> enemiesWhoMovedBall = new HashSet<Enemy>();
 
+    private Label victoryText;
+    private Label loseText;
+
+    private Button restartButton;
+    public AudioSource src;
+    public AudioClip KickSound, NetSound;
+    // Start is called before the first frame update
+    public void KickSoundMethod()
+    {
+        src.clip = KickSound;
+        src.Play();
+
+    }
+    public void NetSoundMethod()
+    {
+        src.clip = NetSound;
+        src.Play();
+
+    }
+
     private void Awake()
     {
         Instance = this;
@@ -20,6 +41,47 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Debug.Log("GameManager Start");
+
+        UIDocument uiDocument =
+            FindFirstObjectByType<UIDocument>();
+
+        if (uiDocument != null)
+        {
+            victoryText =
+                uiDocument.rootVisualElement.Q<Label>(
+                    "VictoryText"
+                );
+
+            loseText =
+                uiDocument.rootVisualElement.Q<Label>(
+                    "LoseText"
+                );
+
+            restartButton =
+                uiDocument.rootVisualElement.Q<Button>(
+                    "RestartButton"
+                );
+
+            if (victoryText != null)
+            {
+                victoryText.style.display =
+                    DisplayStyle.None;
+            }
+
+            if (loseText != null)
+            {
+                loseText.style.display =
+                    DisplayStyle.None;
+            }
+
+            if (restartButton != null)
+            {
+                restartButton.style.display =
+                    DisplayStyle.None;
+
+                restartButton.clicked += RestartGame;
+            }
+        }
 
         UpdateGamestate(Gamestate.Start);
     }
@@ -36,28 +98,23 @@ public class GameManager : MonoBehaviour
 
                 Debug.Log("Start state - Generating Grid");
 
-                // Generate grid
                 GridManager.Instance.GenerateGrid();
 
-                // Spawn ball
                 BallManager ballManager =
                     FindFirstObjectByType<BallManager>();
 
                 ballManager.SpawnRandomBall();
 
-                // Spawn enemies
                 EnemyManager enemyManager =
                     FindFirstObjectByType<EnemyManager>();
 
                 enemyManager.SpawnEnemies();
 
-                // Spawn players
                 PlayerManager playerManager =
                     FindFirstObjectByType<PlayerManager>();
 
                 playerManager.SpawnPlayers();
 
-                // Start player turn
                 StartPlayerTurn();
 
                 break;
@@ -73,6 +130,7 @@ public class GameManager : MonoBehaviour
             case Gamestate.PlayerBallMove:
 
                 Debug.Log("PLAYER BALL MOVE");
+                
 
                 Ball ball = FindFirstObjectByType<Ball>();
 
@@ -107,6 +165,7 @@ public class GameManager : MonoBehaviour
             case Gamestate.EnemyBallMove:
 
                 Debug.Log("ENEMY BALL MOVE");
+                
 
                 Ball ball2 = FindFirstObjectByType<Ball>();
 
@@ -118,6 +177,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     Debug.Log("No enemy is near the ball.");
+                    
 
                     // Skip ball movement
                     StartPlayerTurn();
@@ -129,6 +189,25 @@ public class GameManager : MonoBehaviour
             case Gamestate.Victory:
 
                 Debug.Log("VICTORY!");
+                NetSoundMethod();
+
+                if (victoryText != null)
+                {
+                    victoryText.style.display =
+                        DisplayStyle.Flex;
+                }
+
+                if (loseText != null)
+                {
+                    loseText.style.display =
+                        DisplayStyle.None;
+                }
+
+                if (restartButton != null)
+                {
+                    restartButton.style.display =
+                        DisplayStyle.Flex;
+                }
 
                 break;
 
@@ -136,6 +215,25 @@ public class GameManager : MonoBehaviour
             case Gamestate.Lose:
 
                 Debug.Log("LOSE!");
+                NetSoundMethod();
+
+                if (victoryText != null)
+                {
+                    victoryText.style.display =
+                        DisplayStyle.None;
+                }
+
+                if (loseText != null)
+                {
+                    loseText.style.display =
+                        DisplayStyle.Flex;
+                }
+
+                if (restartButton != null)
+                {
+                    restartButton.style.display =
+                        DisplayStyle.Flex;
+                }
 
                 break;
         }
@@ -149,14 +247,13 @@ public class GameManager : MonoBehaviour
     public void StartPlayerTurn()
     {
         PlayerManager playerManager =
-            FindFirstObjectByType<PlayerManager>();
+        FindFirstObjectByType<PlayerManager>();
 
-        playerManager.ResetPlayerMoves();
-
-        // Reset ball movement for players
         playersWhoMovedBall.Clear();
 
         UpdateGamestate(Gamestate.PlayerMove);
+
+        playerManager.ResetPlayerMoves();
     }
 
 
@@ -175,6 +272,7 @@ public class GameManager : MonoBehaviour
     public void PlayerBallFinished()
     {
         Debug.Log("Player finished moving the ball.");
+        KickSoundMethod();
 
         Ball ball = FindFirstObjectByType<Ball>();
 
@@ -221,6 +319,7 @@ public class GameManager : MonoBehaviour
     public void EnemyBallFinished()
     {
         Debug.Log("Enemy finished moving the ball.");
+        KickSoundMethod();
 
         Ball ball = FindFirstObjectByType<Ball>();
 
@@ -294,5 +393,70 @@ public class GameManager : MonoBehaviour
     public void EnemyMovedBall(Enemy enemy)
     {
         enemiesWhoMovedBall.Add(enemy);
+    }
+    
+    public void RestartGame()
+    {
+        Debug.Log("RESTARTING GAME");
+        
+
+        // Clear selected object
+        SelectedObject = null;
+
+        // Clear ball movement records
+        playersWhoMovedBall.Clear();
+        enemiesWhoMovedBall.Clear();
+
+
+        // Get managers
+        PlayerManager playerManager =
+            FindFirstObjectByType<PlayerManager>();
+
+        EnemyManager enemyManager =
+            FindFirstObjectByType<EnemyManager>();
+
+        BallManager ballManager =
+            FindFirstObjectByType<BallManager>();
+
+
+        // Destroy existing objects
+        if (playerManager != null)
+        {
+            playerManager.ClearPlayers();
+        }
+
+        if (enemyManager != null)
+        {
+            enemyManager.ClearEnemies();
+        }
+
+        if (ballManager != null)
+        {
+            ballManager.ClearBall();
+        }
+
+
+        // Hide end-game UI
+        if (victoryText != null)
+        {
+            victoryText.style.display =
+                DisplayStyle.None;
+        }
+
+        if (loseText != null)
+        {
+            loseText.style.display =
+                DisplayStyle.None;
+        }
+
+        if (restartButton != null)
+        {
+            restartButton.style.display =
+                DisplayStyle.None;
+        }
+
+
+        // Start a completely new game
+        UpdateGamestate(Gamestate.Start);
     }
 }

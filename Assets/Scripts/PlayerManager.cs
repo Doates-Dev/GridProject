@@ -8,6 +8,7 @@ public class PlayerManager : MonoBehaviour
     private List<Player> players = new List<Player>();
 
     private int playersMoved = 0;
+   
 
     public void SpawnPlayers()
     {
@@ -16,11 +17,14 @@ public class PlayerManager : MonoBehaviour
         // 1 player on the left
         SpawnPlayer(1, 7);
         SpawnPlayer(1, 7);
+        SpawnPlayer(1, 7);
 
         // 2 players on the right
-        
+
         SpawnPlayer(9, 14);
+        SpawnPlayer(9, 14); 
         SpawnPlayer(9, 14);
+
     }
 
     private void SpawnPlayer(int minX, int maxX)
@@ -94,5 +98,17 @@ public class PlayerManager : MonoBehaviour
         {
             player.ResetMovement();
         }
+    }
+    public void ClearPlayers()
+    {
+        foreach (Player player in players)
+        {
+            if (player != null)
+            {
+                Destroy(player.gameObject);
+            }
+        }
+
+        players.Clear();
     }
 }
