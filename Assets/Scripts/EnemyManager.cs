@@ -6,19 +6,21 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private GameObject enemyPrefab;
 
     private List<Enemy> enemies = new List<Enemy>();
+    private List<Vector2> enemyStartingPositions = new List<Vector2>();
 
     private int enemiesMoved = 0;
 
     public void SpawnEnemies()
     {
         enemies.Clear();
+        enemyStartingPositions.Clear();
 
-        // 1 enemy on left
+        // Left side
         SpawnEnemy(1, 7);
         SpawnEnemy(1, 7);
         SpawnEnemy(1, 7);
 
-        // 2 enemies on right
+        // Right side
         SpawnEnemy(9, 14);
         SpawnEnemy(9, 14);
         SpawnEnemy(9, 14);
@@ -50,6 +52,9 @@ public class EnemyManager : MonoBehaviour
         enemy.SetEnemyManager(this);
 
         enemies.Add(enemy);
+        enemyStartingPositions.Add(gridPosition);
+
+        GridManager.Instance.OccupyPosition(gridPosition);
     }
 
     public void EnemyMoved(Enemy enemy)
@@ -85,6 +90,58 @@ public class EnemyManager : MonoBehaviour
 
         Debug.Log("Enemy turn started");
     }
+
+    public void ResetEnemiesToStart()
+    {
+        Debug.Log("Resetting enemies to starting positions.");
+
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            Enemy enemy = enemies[i];
+
+            if (enemy == null)
+                continue;
+
+            Vector2 currentPosition =
+                enemy.GetGridPosition();
+
+            Vector2 startingPosition =
+                enemyStartingPositions[i];
+
+            // Free current position
+            GridManager.Instance.OccupyPosition(
+    startingPosition
+);
+
+            // Set enemy grid position
+            enemy.SetGridPosition(
+                startingPosition
+            );
+
+            // Move enemy visually
+            Tile tile =
+                GridManager.Instance.GetTileAtPosition(
+                    startingPosition
+                );
+
+            if (tile != null)
+            {
+                Vector3 worldPosition =
+                    tile.transform.position;
+
+                worldPosition.z = -1f;
+
+                enemy.transform.position =
+                    worldPosition;
+            }
+
+            // Reset movement
+            enemy.ResetMovement();
+        }
+
+        enemiesMoved = 0;
+    }
+
     public void ClearEnemies()
     {
         foreach (Enemy enemy in enemies)
@@ -96,5 +153,6 @@ public class EnemyManager : MonoBehaviour
         }
 
         enemies.Clear();
+        enemyStartingPositions.Clear();
     }
 }

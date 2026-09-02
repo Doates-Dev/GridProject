@@ -19,6 +19,90 @@ public class GameManager : MonoBehaviour
     public AudioSource src;
     public AudioClip KickSound, NetSound;
     // Start is called before the first frame update
+
+    private int playerScore = 0;
+    private int enemyScore = 0;
+
+    
+
+    public int GetPlayerScore()
+    {
+
+        return playerScore;
+    }
+
+    public int GetEnemyScore()
+    {
+        return enemyScore;
+    }
+    public void PlayerScored()
+    {
+        playerScore++;
+
+        Debug.Log("PLAYER SCORED! Score: " +
+                  playerScore + " - " + enemyScore);
+
+        if (playerScore >= 3)
+        {
+            UpdateGamestate(Gamestate.Victory);
+            return;
+        }
+
+        ResetAfterGoal();
+    }
+    private void ResetAfterGoal()
+    {
+        Debug.Log("Goal scored! Resetting for next round.");
+
+        SelectedObject = null;
+
+        PlayerManager playerManager =
+            FindFirstObjectByType<PlayerManager>();
+
+        EnemyManager enemyManager =
+            FindFirstObjectByType<EnemyManager>();
+
+        BallManager ballManager =
+            FindFirstObjectByType<BallManager>();
+
+        // Remove old ball
+        ballManager.ClearBall();
+
+        // Clear ALL old occupancy data
+        GridManager.Instance.ClearOccupiedPositions();
+
+        // Reset players
+        playerManager.ResetPlayersToStart();
+
+        // Reset enemies
+        enemyManager.ResetEnemiesToStart();
+
+        // Clear ball movement records
+        playersWhoMovedBall.Clear();
+        enemiesWhoMovedBall.Clear();
+
+        // Spawn fresh ball
+        ballManager.SpawnRandomBall();
+
+        // Start new round
+        StartPlayerTurn();
+    }
+
+    public void EnemyScored()
+    {
+        enemyScore++;
+
+        Debug.Log("ENEMY SCORED! Score: " +
+                  playerScore + " - " + enemyScore);
+
+        if (enemyScore >= 3)
+        {
+            UpdateGamestate(Gamestate.Lose);
+            return;
+        }
+
+        ResetAfterGoal();
+    }
     public void KickSoundMethod()
     {
         src.clip = KickSound;
@@ -247,7 +331,7 @@ public class GameManager : MonoBehaviour
     public void StartPlayerTurn()
     {
         PlayerManager playerManager =
-        FindFirstObjectByType<PlayerManager>();
+            FindFirstObjectByType<PlayerManager>();
 
         playersWhoMovedBall.Clear();
 

@@ -101,11 +101,13 @@ public class GridManager : MonoBehaviour
 
         Vector2 randomPosition =
             availablePositions[Random.Range(0, availablePositions.Count)];
-        GridManager.Instance.OccupyPosition(randomPosition);
-
-        _occupiedPositions.Add(randomPosition);
+        OccupyPosition(randomPosition);
 
         return randomPosition;
+    }
+    public void ClearOccupiedPositions()
+    {
+        _occupiedPositions.Clear();
     }
 
     // Frees a tile when an object moves away from it

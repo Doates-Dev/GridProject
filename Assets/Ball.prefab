@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7078723687503308186}
   - component: {fileID: 3356517454982342978}
-  - component: {fileID: 9027635382051838794}
   - component: {fileID: -5901264098744111468}
   - component: {fileID: 5106787167232197345}
   m_Layer: 0
@@ -87,19 +86,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &9027635382051838794
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2272967434224555083}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd1bd13216f4cef45ab41945cdd20665, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ballPrefab: {fileID: 2272967434224555083}
 --- !u!114 &-5901264098744111468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,7 +98,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb3e79f8dec4067498707b019872495b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soundEffects: {fileID: 0}
 --- !u!58 &5106787167232197345
 CircleCollider2D:
   m_ObjectHideFlags: 0

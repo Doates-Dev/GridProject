@@ -8,11 +8,14 @@ public class PlayerManager : MonoBehaviour
     private List<Player> players = new List<Player>();
 
     private int playersMoved = 0;
-   
+
+    private List<Vector2> playerStartingPositions = new List<Vector2>();
+
 
     public void SpawnPlayers()
     {
         players.Clear();
+        playerStartingPositions.Clear();
 
         // 1 player on the left
         SpawnPlayer(1, 7);
@@ -47,14 +50,16 @@ public class PlayerManager : MonoBehaviour
             Quaternion.identity
         );
 
-        Player player = playerObject.GetComponent<Player>();
+        Player player =
+            playerObject.GetComponent<Player>();
 
         player.SetGridPosition(gridPosition);
-
-        // Give this player access to PlayerManager
         player.SetPlayerManager(this);
 
         players.Add(player);
+        playerStartingPositions.Add(gridPosition);
+
+        GridManager.Instance.OccupyPosition(gridPosition);
     }
 
     public bool CanPlayerMove(Player player)
@@ -110,5 +115,55 @@ public class PlayerManager : MonoBehaviour
         }
 
         players.Clear();
+    }
+    public void ResetPlayersToStart()
+    {
+        Debug.Log("Resetting players to starting positions.");
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            Player player = players[i];
+
+            if (player == null)
+                continue;
+
+            Vector2 currentPosition =
+                player.GetGridPosition();
+
+            Vector2 startingPosition =
+                playerStartingPositions[i];
+
+            // Free current position
+            GridManager.Instance.OccupyPosition(
+     startingPosition
+ );
+
+            // Set player grid position
+            player.SetGridPosition(
+                startingPosition
+            );
+
+            // Move player visually
+            Tile tile =
+                GridManager.Instance.GetTileAtPosition(
+                    startingPosition
+                );
+
+            if (tile != null)
+            {
+                Vector3 worldPosition =
+                    tile.transform.position;
+
+                worldPosition.z = -1f;
+
+                player.transform.position =
+                    worldPosition;
+            }
+
+            // Reset movement
+            player.ResetMovement();
+        }
+
+        playersMoved = 0;
     }
 }

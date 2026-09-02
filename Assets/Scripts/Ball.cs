@@ -10,14 +10,39 @@ public class Ball : MonoBehaviour
     private Enemy ballMovingEnemy;
 
 
-   
+
 
     // ==========================================
     // SETUP
     // ==========================================
 
 
+    private void Awake()
+    {
+        Debug.Log(
+            "BALL AWAKE: " +
+            gameObject.name +
+            " | enabled = " +
+            enabled +
+            " | active = " +
+            gameObject.activeSelf
+        );
+    }
 
+    private void OnEnable()
+    {
+        Debug.Log("BALL OnEnable: " + gameObject.name);
+    }
+
+    private void OnDisable()
+    {
+        Debug.Log("BALL OnDisable: " + gameObject.name);
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log("BALL OnDestroy: " + gameObject.name);
+    }
 
 
     public void SetGridPosition(Vector2 position)
@@ -206,6 +231,12 @@ public class Ball : MonoBehaviour
 
     private void Move(Vector2 direction)
     {
+        Debug.Log(
+    "BALL MOVE ATTEMPT: " +
+    currentGridPosition +
+    " direction: " +
+    direction
+);
         // Remember where the ball started
         Vector2 startingPosition = currentGridPosition;
 
@@ -217,6 +248,12 @@ public class Ball : MonoBehaviour
         {
             Vector2 checkPosition =
                 startingPosition + direction * i;
+            Debug.Log(
+    "Checking ball position: " +
+    checkPosition +
+    " occupied: " +
+    GridManager.Instance.IsPositionOccupied(checkPosition)
+);
 
             // Restricted tile
             if (GridManager.Instance.IsRestrictedPosition(checkPosition))
@@ -329,27 +366,18 @@ public class Ball : MonoBehaviour
 
         if (IsVictoryPosition())
         {
-            Debug.Log("BALL ENTERED VICTORY AREA!");
+            Debug.Log("PLAYER SCORED!");
 
-            GameManager.Instance.UpdateGamestate(
-                GameManager.Gamestate.Victory
-            );
+            GameManager.Instance.PlayerScored();
 
             return;
         }
 
-
-        // ==========================================
-        // CHECK LOSE
-        // ==========================================
-
         if (IsLosePosition())
         {
-            Debug.Log("BALL ENTERED LOSE AREA!");
+            Debug.Log("ENEMY SCORED!");
 
-            GameManager.Instance.UpdateGamestate(
-                GameManager.Gamestate.Lose
-            );
+            GameManager.Instance.EnemyScored();
 
             return;
         }
@@ -384,16 +412,17 @@ public class Ball : MonoBehaviour
                 FindObjectsSortMode.None
             );
 
-
         foreach (Player player in players)
         {
-            if (IsWithinOneTile(
-                player.GetGridPosition()))
+            // Ignore players who already moved the ball this turn
+            if (GameManager.Instance.HasPlayerMovedBall(player))
+                continue;
+
+            if (IsWithinOneTile(player.GetGridPosition()))
             {
                 return true;
             }
         }
-
 
         return false;
     }
@@ -410,16 +439,17 @@ public class Ball : MonoBehaviour
                 FindObjectsSortMode.None
             );
 
-
         foreach (Enemy enemy in enemies)
         {
-            if (IsWithinOneTile(
-                enemy.GetGridPosition()))
+            // Ignore enemies who already moved the ball this turn
+            if (GameManager.Instance.HasEnemyMovedBall(enemy))
+                continue;
+
+            if (IsWithinOneTile(enemy.GetGridPosition()))
             {
                 return true;
             }
         }
-
 
         return false;
     }
