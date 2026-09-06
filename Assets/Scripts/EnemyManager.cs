@@ -15,15 +15,18 @@ public class EnemyManager : MonoBehaviour
         enemies.Clear();
         enemyStartingPositions.Clear();
 
-        // Left side
-        SpawnEnemy(1, 7);
-        SpawnEnemy(1, 7);
-        SpawnEnemy(1, 7);
 
-        // Right side
-        SpawnEnemy(9, 14);
-        SpawnEnemy(9, 14);
-        SpawnEnemy(9, 14);
+
+        // 1 player on the left
+        SpawnEnemy(1, 6);
+        SpawnEnemy(1, 6);
+        SpawnEnemy(1, 6);
+
+        // 2 players on the right
+
+        SpawnEnemy(10, 14);
+        SpawnEnemy(10, 14);
+        SpawnEnemy(10, 14);
     }
 
     private void SpawnEnemy(int minX, int maxX)
@@ -148,11 +151,16 @@ public class EnemyManager : MonoBehaviour
         {
             if (enemy != null)
             {
+                Vector2 position = enemy.GetGridPosition();
+
+                GridManager.Instance.FreePosition(position);
+
                 Destroy(enemy.gameObject);
             }
         }
 
         enemies.Clear();
         enemyStartingPositions.Clear();
+        enemiesMoved = 0;
     }
 }

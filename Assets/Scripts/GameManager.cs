@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
             UpdateGamestate(Gamestate.Victory);
             return;
         }
-
+        NetSoundMethod();
         ResetAfterGoal();
     }
 
@@ -71,14 +71,12 @@ public class GameManager : MonoBehaviour
             UpdateGamestate(Gamestate.Lose);
             return;
         }
-
+        NetSoundMethod();
         ResetAfterGoal();
     }
     private void ResetAfterGoal()
     {
-        Debug.Log("Goal scored! Resetting for next round.");
-
-        SelectedObject = null;
+        Debug.Log("Goal scored! Starting new round.");
 
         PlayerManager playerManager =
             FindFirstObjectByType<PlayerManager>();
@@ -89,30 +87,25 @@ public class GameManager : MonoBehaviour
         BallManager ballManager =
             FindFirstObjectByType<BallManager>();
 
-        // Remove old ball
+        // Remove old characters AND free their tiles
+        playerManager.ClearPlayers();
+        enemyManager.ClearEnemies();
+
+        // Remove old ball AND free its tile
         ballManager.ClearBall();
 
-        // Clear ALL old occupancy data
-        GridManager.Instance.ClearOccupiedPositions();
+        // Spawn a completely new setup
+        playerManager.SpawnPlayers();
+        enemyManager.SpawnEnemies();
+        ballManager.SpawnRandomBall();
 
-        // Reset players
-        playerManager.ResetPlayersToStart();
-
-        // Reset enemies
-        enemyManager.ResetEnemiesToStart();
-
-        // Clear ball movement records
         playersWhoMovedBall.Clear();
         enemiesWhoMovedBall.Clear();
 
-        // Spawn fresh ball
-        ballManager.SpawnRandomBall();
-
-        // Start new round
         StartPlayerTurn();
     }
 
-    
+
     public void KickSoundMethod()
     {
         src.clip = KickSound;
@@ -286,7 +279,7 @@ public class GameManager : MonoBehaviour
             case Gamestate.Victory:
 
                 Debug.Log("VICTORY!");
-                NetSoundMethod();
+                
 
                 if (victoryText != null)
                 {
@@ -312,7 +305,7 @@ public class GameManager : MonoBehaviour
             case Gamestate.Lose:
 
                 Debug.Log("LOSE!");
-                NetSoundMethod();
+                
 
                 if (victoryText != null)
                 {

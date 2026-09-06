@@ -18,15 +18,15 @@ public class PlayerManager : MonoBehaviour
         playerStartingPositions.Clear();
 
         // 1 player on the left
-        SpawnPlayer(1, 7);
-        SpawnPlayer(1, 7);
-        SpawnPlayer(1, 7);
+        SpawnPlayer(1, 6);
+        SpawnPlayer(1, 6);
+        SpawnPlayer(1, 6);
 
         // 2 players on the right
 
-        SpawnPlayer(9, 14);
-        SpawnPlayer(9, 14); 
-        SpawnPlayer(9, 14);
+        SpawnPlayer(10, 14);
+        SpawnPlayer(10, 14); 
+        SpawnPlayer(10, 14);
 
     }
 
@@ -110,11 +110,17 @@ public class PlayerManager : MonoBehaviour
         {
             if (player != null)
             {
+                Vector2 position = player.GetGridPosition();
+
+                GridManager.Instance.FreePosition(position);
+
                 Destroy(player.gameObject);
             }
         }
 
         players.Clear();
+        playerStartingPositions.Clear();
+        playersMoved = 0;
     }
     public void ResetPlayersToStart()
     {
