@@ -23,7 +23,11 @@ public class GameManager : MonoBehaviour
     private int playerScore = 0;
     private int enemyScore = 0;
 
-    
+    private Label playerScoreText;
+    private Label enemyScoreText;
+
+
+
 
     public int GetPlayerScore()
     {
@@ -39,12 +43,32 @@ public class GameManager : MonoBehaviour
     {
         playerScore++;
 
-        Debug.Log("PLAYER SCORED! Score: " +
-                  playerScore + " - " + enemyScore);
+        Debug.Log("PLAYER SCORED!");
+        Debug.Log("Score: " + playerScore + " - " + enemyScore);
+
+        UpdateScoreUI();
 
         if (playerScore >= 3)
         {
             UpdateGamestate(Gamestate.Victory);
+            return;
+        }
+
+        ResetAfterGoal();
+    }
+
+    public void EnemyScored()
+    {
+        enemyScore++;
+
+        Debug.Log("ENEMY SCORED!");
+        Debug.Log("Score: " + playerScore + " - " + enemyScore);
+
+        UpdateScoreUI();
+
+        if (enemyScore >= 3)
+        {
+            UpdateGamestate(Gamestate.Lose);
             return;
         }
 
@@ -88,21 +112,7 @@ public class GameManager : MonoBehaviour
         StartPlayerTurn();
     }
 
-    public void EnemyScored()
-    {
-        enemyScore++;
-
-        Debug.Log("ENEMY SCORED! Score: " +
-                  playerScore + " - " + enemyScore);
-
-        if (enemyScore >= 3)
-        {
-            UpdateGamestate(Gamestate.Lose);
-            return;
-        }
-
-        ResetAfterGoal();
-    }
+    
     public void KickSoundMethod()
     {
         src.clip = KickSound;
@@ -132,43 +142,46 @@ public class GameManager : MonoBehaviour
         if (uiDocument != null)
         {
             victoryText =
-                uiDocument.rootVisualElement.Q<Label>(
-                    "VictoryText"
-                );
+                uiDocument.rootVisualElement.Q<Label>("VictoryText");
 
             loseText =
-                uiDocument.rootVisualElement.Q<Label>(
-                    "LoseText"
-                );
+                uiDocument.rootVisualElement.Q<Label>("LoseText");
 
             restartButton =
-                uiDocument.rootVisualElement.Q<Button>(
-                    "RestartButton"
-                );
+                uiDocument.rootVisualElement.Q<Button>("RestartButton");
+
+            playerScoreText =
+                uiDocument.rootVisualElement.Q<Label>("PlayerScoreText");
+
+            enemyScoreText =
+                uiDocument.rootVisualElement.Q<Label>("EnemyScoreText");
 
             if (victoryText != null)
-            {
-                victoryText.style.display =
-                    DisplayStyle.None;
-            }
+                victoryText.style.display = DisplayStyle.None;
 
             if (loseText != null)
-            {
-                loseText.style.display =
-                    DisplayStyle.None;
-            }
+                loseText.style.display = DisplayStyle.None;
 
             if (restartButton != null)
             {
-                restartButton.style.display =
-                    DisplayStyle.None;
-
+                restartButton.style.display = DisplayStyle.None;
                 restartButton.clicked += RestartGame;
             }
+
+            UpdateScoreUI();
         }
 
         UpdateGamestate(Gamestate.Start);
     }
+    private void UpdateScoreUI()
+    {
+        if (playerScoreText != null)
+            playerScoreText.text = "Blue: " + playerScore;
+
+        if (enemyScoreText != null)
+            enemyScoreText.text = "Red: " + enemyScore;
+    }
+
 
     public void UpdateGamestate(Gamestate newState)
     {
@@ -482,7 +495,10 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         Debug.Log("RESTARTING GAME");
-        
+        playerScore = 0;
+        enemyScore = 0;
+
+        UpdateScoreUI();
 
         // Clear selected object
         SelectedObject = null;
@@ -543,4 +559,5 @@ public class GameManager : MonoBehaviour
         // Start a completely new game
         UpdateGamestate(Gamestate.Start);
     }
+
 }
